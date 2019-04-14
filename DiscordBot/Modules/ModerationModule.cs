@@ -21,12 +21,13 @@ namespace DiscordBot.Modules
         private readonly UserService _user;
         private readonly DatabaseService _database;
         private readonly Settings.Deserialized.Settings _settings;
+        private readonly RoleService _roleService;
         private readonly Rules _rules;
 
         private Dictionary<ulong, DateTime> MutedUsers => _user._mutedUsers;
 
         public ModerationModule(ILoggingService logging, PublisherService publisher, UpdateService update, UserService user,
-            DatabaseService database, Rules rules, Settings.Deserialized.Settings settings)
+            DatabaseService database, Rules rules, Settings.Deserialized.Settings settings, RoleService roleService)
         {
             _logging = logging;
             _publisher = publisher;
@@ -35,6 +36,7 @@ namespace DiscordBot.Modules
             _database = database;
             _rules = rules;
             _settings = settings;
+            _roleService = roleService;
         }
 
         [Command("mute"), Summary("Mute a user for a fixed duration")]
@@ -366,6 +368,7 @@ namespace DiscordBot.Modules
             await Context.Message.DeleteAsync();
         }
 
+        
         [Command("closepoll"), Summary("Close a poll and append a message.")]
         [Alias("pollclose")]
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -408,6 +411,15 @@ namespace DiscordBot.Modules
         {
             _database.AddNewUser((SocketGuildUser) user);
         }
+        [Command("updaterolechannel"), Summary("Updates role channel")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        async Task UpdateRolesChannel()
+        {
+            var msg = await ReplyAsync("Updating...");
+            await _roleService.UpdateChannel(Context.Guild);
+            await msg.ModifyAsync(x => x.Content = "Done!");
+        }
+
 
         [Command("say")]
         async Task Say(IMessageChannel channel, params string[] messages)

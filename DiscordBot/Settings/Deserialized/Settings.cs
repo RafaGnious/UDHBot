@@ -26,6 +26,8 @@ namespace DiscordBot.Settings.Deserialized
 
         public string DeleteProfileMessageCacheTime { get; set; }
 
+        public string RoleAddingReaction { get; set; }
+
         public AllRoles AllRoles { get; set; }
 
         public RolesBanned RolesBanned { get; set; }
@@ -37,6 +39,8 @@ namespace DiscordBot.Settings.Deserialized
         public ServerId ServerId { get; set; }
 
         public GeneralChannel GeneralChannel { get; set; }
+
+        public RoleAddingChannel RoleAddingChannel { get; set; }
 
         public BotDevelopmentChannel BotDevelopmentChannel { get; set; }
 
@@ -116,6 +120,12 @@ namespace DiscordBot.Settings.Deserialized
     }
 
     public class GeneralChannel
+    {
+        public string Desc { get; set; }
+        public ulong Id { get; set; }
+    }
+
+    public class RoleAddingChannel
     {
         public string Desc { get; set; }
         public ulong Id { get; set; }

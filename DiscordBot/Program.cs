@@ -35,6 +35,7 @@ namespace DiscordBot
         private CasinoService _casinoService;
         private FeedService _feedService;
         private CurrencyService _currencyService;
+        private RoleService _roleService;
 
         private static PayWork _payWork;
         private static Rules _rules;
@@ -67,6 +68,7 @@ namespace DiscordBot
             _audioService = new AudioService(_loggingService, _client, _settings);
             _casinoService = new CasinoService(_loggingService, _updateService, _databaseService, _settings);
             _currencyService = new CurrencyService();
+            _roleService = new RoleService(_settings, _loggingService);
             _serviceCollection = new ServiceCollection();
             _serviceCollection.AddSingleton(_loggingService);
             _serviceCollection.AddSingleton(_databaseService);
@@ -83,6 +85,7 @@ namespace DiscordBot
             _serviceCollection.AddSingleton(_payWork);
             _serviceCollection.AddSingleton(_userSettings);
             _serviceCollection.AddSingleton(_currencyService);
+            _serviceCollection.AddSingleton(_roleService);
             _services = _serviceCollection.BuildServiceProvider();
 
 
@@ -139,6 +142,8 @@ namespace DiscordBot
             _client.MessageUpdated += _userService.ThanksEdited;
             _client.MessageReceived += _userService.CodeCheck;
             _client.MessageReceived += _userService.ScoldForAtEveryoneUsage;
+            _client.ReactionAdded += _roleService.ReactionAddedHandler;
+            _client.ReactionRemoved += _roleService.ReactionRemovedHandler;
             //_client.MessageReceived += _userService.UselessAskingCheck; //to do declared at method
 
             //_client.MessageReceived += _work.OnMessageAdded;
@@ -168,6 +173,7 @@ namespace DiscordBot
 
             CommandList = commandList.ToString();
         }
+
 
         private async Task MessageDeleted(Cacheable<IMessage, ulong> message, ISocketMessageChannel channel)
         {
